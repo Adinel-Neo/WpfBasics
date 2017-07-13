@@ -3,10 +3,12 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
+using WpfTreeView.Directory;
+using WpfTreeView.Directory.Data;
 
 namespace WpfTreeView
 {
-    [ValueConversion(typeof(string), typeof(BitmapImage))]
+    [ValueConversion(typeof(DirectoryItemType), typeof(BitmapImage))]
     public class HeaderToImageConverter : IValueConverter
     {
 
@@ -23,26 +25,18 @@ namespace WpfTreeView
         /// <returns></returns>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            //get the full path
-            var path = (string)value;
-
-            // if the path is null ignore
-            if (path == null)
-                return null;
-
-            var name = MainWindow.GetFileOrFolderName(path);
-
             var image = "Imagens/file.png";
-
-            if (string.IsNullOrEmpty(name))
+                        
+            switch ((DirectoryItemType)value)
             {
-                image = "Imagens/drive.png";
+                case DirectoryItemType.Drive:
+                    image = "Imagens/drive.png";
+                    break;
+                case DirectoryItemType.Folder:
+                    image = "Imagens/folder-closed.png";
+                    break;
             }
-            else if (new FileInfo(path).Attributes.HasFlag(FileAttributes.Directory))
-            {
-                image = "Imagens/folder-closed.png";
-            }
-
+            
             return new BitmapImage(new Uri($"pack://application:,,,/{image}"));
         }
 
